@@ -7,7 +7,7 @@ export function Login() {
         email:"",
         password:"",
     });
-    const { login }= useAuth() 
+    const { login, loginWithGoogle } = useAuth();
     const navigate = useNavigate()
     const [error, setError] = useState();
 
@@ -19,10 +19,15 @@ export function Login() {
         try{
             await login(user.email, user.password);
             navigate('/')
-        } catch (error) {
+        } catch (error) {     
           setError(error.message);  
         }       
     };
+
+    const handleGoogleSignin = async () => {
+        await loginWithGoogle ();
+        navigate('/')
+    }
 
     return (
       <div>
@@ -48,6 +53,7 @@ export function Login() {
             />
             <button>Login</button>
         </form>
+        <button onClick={handleGoogleSignin}>Google Login</button>
       </div>  
-    )
+    );
   }
