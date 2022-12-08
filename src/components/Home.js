@@ -1,20 +1,26 @@
 import { useAuth } from "../context/authContext";
+import Sidebar from "./Sidebar";
 
 export function Home() {
 
-  const { user, logout, loading } =useAuth()
+  const { user, loading } = useAuth()
 
-  const handleLogout = async() => {
-    await logout();
-  };
   if (loading) return <h1>loading</h1>
 
   return <div>
-    <h1>Welcome {user.email}</h1>
+    <Sidebar menu={1} />
 
-    <button onClick={handleLogout}>
-      logout
-      </button> 
+    <div className="container">
+      <div id="home">
+        <div className="text-center" id="presentacion">
+          <p className="display-2">Bienvenido</p>
+          <p className="display-2">Control Horarios</p>
+        </div>
+      </div>
+      <h1>Welcome {user.email}</h1>
 
-    </div>; 
+
+    </div>
+
+  </div>;
 }
