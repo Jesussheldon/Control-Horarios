@@ -1,0 +1,39 @@
+{
+    "usuarios": {
+      " O3eyZ2kMjbqbIfO1": {
+        "id": " O3eyZ2kMjbqbIfO1",
+        "nombre": "DE LOS RIOS GONZALEZ GUILLERMO",
+        "turno": "VESPERTINO"
+      },
+      " PIQr22SZUjzLt9eM": {
+        "id": " PIQr22SZUjzLt9eM",
+        "nombre": "AGUIRRE CALDERON OMAR",
+        "turno": "MATUTINO"
+      },
+      " Yldv89UgI7vWEK9L": {
+        "id": " Yldv89UgI7vWEK9L",
+        "nombre": "GRIJALVA CAMACHO JESUS",
+        "turno": "MATUTINO"
+      },
+      " fL1etV0DWlxntOAN": {
+        "id": " fL1etV0DWlxntOAN",
+        "nombre": "LIZARRAGA SEPULVEDA SIGFRIDO",
+        "turno": "JORNADA ACUMULADA"
+      },
+      " neZeoQ4GwnunJvI4": {
+        "id": " neZeoQ4GwnunJvI4",
+        "nombre": "OSUNA BOLADO EVERARDO ANTONIO",
+        "turno": "MATUTINO"
+      },
+      " nkf0YRHgQGmNI75O": {
+        "id": " nkf0YRHgQGmNI75O",
+        "nombre": "DELGADO PALAZUELOS ASCARY VLADIMIR",
+        "turno": "JORNADA ACUMULADA"
+      },
+      " nyAljrIawx3OzZ9U": {
+        "id": " nyAljrIawx3OzZ9U",
+        "nombre": "TORRES OCHOA RODOLFO",
+        "turno": "MATUTINO"
+      }
+    }
+  }

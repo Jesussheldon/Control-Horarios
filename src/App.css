@@ -65,3 +65,14 @@ body {
   box-shadow: 0px 0px 1px 1px #000A ;
   padding: 30px 40px;
 }
+
+.rbc-calendar{
+  background-color: white;
+}
+
+#btAgregar{
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  border-radius: 50%;
+}
