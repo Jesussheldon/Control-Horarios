@@ -28,6 +28,7 @@ export function Horarios() {
     ])
     obtenerHorarios()
     obtenerCamilleros()
+    eventoColor()
   }, [])
 
   const writeUserData = (nombre, turno) => {
@@ -66,17 +67,18 @@ export function Horarios() {
 
   const obtenerHorarios = () => {
     const dbRef = ref(getDatabase());
-    get(child(dbRef, `horarios`)).then((snapshot) => {
+    get(child(dbRef, `horarios`)).then(async (snapshot) => {
       if (snapshot.exists()) {
         let listaHorarios = []
         for (const [_key, value] of Object.entries(snapshot.val())) {
           listaHorarios.push({
             start: moment(value.fecha).toDate(),
             end: moment(value.fecha).add(1, "days").toDate(),
-            title: value.camillero.nombre + "<br/>" + value.evento
+            title: value.camillero.nombre + " (" + value.evento + ")"
           })
         }
-        setHorarios(listaHorarios)
+        await setHorarios(listaHorarios)
+        eventoColor()
       } else {
         console.log("No data available");
       }
@@ -94,6 +96,29 @@ export function Horarios() {
     }
 
     return result;
+  }
+
+  const eventoColor = () => {
+    const els = document.getElementsByClassName("rbc-event");
+    const searchValue1 = "(VACACIONES)";
+    const searchValue2 = "(CONGRESOS)";
+    const searchValue3 = "(INCAPACIDADES)";
+    const searchValue4 = "(PERMISOS)";
+    const searchValue5 = "(SEMANA DE RIESGO)";
+
+    for (let i = 0; i < els.length; i++) {
+      if (els[i].innerHTML.indexOf(searchValue1) > -1) {
+        els[i].style.background = "red"
+      } else if (els[i].innerHTML.indexOf(searchValue2) > -1) {
+        els[i].style.background = "green"
+      } else if (els[i].innerHTML.indexOf(searchValue3) > -1) {
+        els[i].style.background = "purple"
+      } else if (els[i].innerHTML.indexOf(searchValue4) > -1) {
+        els[i].style.background = "orange"
+      } else if (els[i].innerHTML.indexOf(searchValue5) > -1) {
+        els[i].style.background = "steelblue"
+      } 
+    }
   }
 
   const obtenerCamilleros = () => {
