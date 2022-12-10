@@ -6,7 +6,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 import { app } from "../firebase";
-import { getDatabase, ref, set, get, child } from "firebase/database";
+import { getDatabase, ref, set, get, child, off } from "firebase/database";
 
 
 
@@ -15,8 +15,18 @@ export function Horarios() {
   const { user, loading } = useAuth();
   const [eventos, setEventos] = useState([]);
   const [camilleros, setCamilleros] = useState([]);
+  const [opciones, setOpciones] = useState("");
+  const [horarios, setHorarios] = useState([]);
 
   useEffect(() => {
+    setEventos([
+      `<option value="VACACIONES">VACACIONES</option>`,
+      `<option value="CONGRESOS">CONGRESOS</option>`,
+      `<option value="INCAPACIDADES">INCAPACIDADES</option>`,
+      `<option value="PERMISOS">PERMISOS</option>`,
+      `<option value="SEMANA DE RIESGO">SEMANA DE RIESGO</option>`
+    ])
+    obtenerHorarios()
     obtenerCamilleros()
   }, [])
 
@@ -29,13 +39,49 @@ export function Horarios() {
       turno: turno
     });
   }
-  const guardarEvento = (evento, fecha) => {
+  const guardarEvento = (idCamillero, evento, fecha) => {
     const db = getDatabase();
-    const id = generateString(16)
-    set(ref(db, 'horarios/' + id), {
-      usuario: generateString(16),
-      fecha: fecha,
-      evento: evento
+    const idEvento = generateString(16)
+
+    get(child(ref(getDatabase()), `usuarios/` + idCamillero)).then((snapshot) => {
+      if (snapshot.exists()) {
+        const camillero = snapshot.val()
+        set(ref(db, 'horarios/' + idEvento), {
+          camillero: {
+            id: camillero.id,
+            nombre: camillero.nombre,
+            turno: camillero.turno
+          },
+          fecha: fecha,
+          evento: evento
+        });
+        obtenerHorarios()
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  const obtenerHorarios = () => {
+    const dbRef = ref(getDatabase());
+    get(child(dbRef, `horarios`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        let listaHorarios = []
+        for (const [_key, value] of Object.entries(snapshot.val())) {
+          listaHorarios.push({
+            start: moment(value.fecha).toDate(),
+            end: moment(value.fecha).add(1, "days").toDate(),
+            title: value.camillero.nombre + "<br/>" + value.evento
+          })
+        }
+        setHorarios(listaHorarios)
+      } else {
+        console.log("No data available");
+      }
+    }).catch((error) => {
+      console.error(error);
     });
   }
 
@@ -54,8 +100,14 @@ export function Horarios() {
     const dbRef = ref(getDatabase());
     get(child(dbRef, `usuarios`)).then((snapshot) => {
       if (snapshot.exists()) {
-        console.log(snapshot.val());
-        setCamilleros(snapshot.val())
+        let listaCamilleros = []
+        let listaOpciones = ""
+        for (const [_key, value] of Object.entries(snapshot.val())) {
+          listaCamilleros.push(value)
+          listaOpciones += `<option value="${value.id}">${value.nombre}</option>`
+        }
+        setOpciones(listaOpciones)
+        setCamilleros(listaCamilleros)
       } else {
         console.log("No data available");
       }
@@ -65,11 +117,12 @@ export function Horarios() {
   }
 
   const agregarEvento = async () => {
-    const { value: formValues } = await Swal.fire({
+
+    const { value: valores } = await Swal.fire({
       title: 'Multiple inputs',
       html:
-        '<select id="swal-input1"><option selected>seleccione uno</option><option value="{"Id": "1238","Nombre": "GRIJALVA CAMACHO JESUS","Turno": "MATUTINO"}">sheldon yoque se</option></select>' +
-        '<select id="swal-input2"><option selected>seleccione uno</option><option value="0">vacaciones</option></select>' +
+        `<select id="swal-input1"><option selected>seleccione uno</option>${opciones}</select>` +
+        `<select id="swal-input2"><option selected>seleccione uno</option>${eventos}</select>` +
         '<input id="swal-input3" type="date" placeholder="Fecha" class="swal2-input">',
       focusConfirm: true,
       preConfirm: () => {
@@ -80,21 +133,9 @@ export function Horarios() {
         ]
       }
     })
-    if (formValues) {
-      Swal.fire(JSON.stringify(formValues))
-      const listaEventos = [
-        "Vacaciones"
-      ]
-      setEventos([
-        {
-          start: moment(formValues[2]).toDate(),
-          end: moment(formValues[2])
-            .add(1, "days")
-            .toDate(),
-          title: listaEventos[formValues[1]]
-        }
-      ])
-      guardarEvento(listaEventos[formValues[1]], formValues[2])
+
+    if (valores) {
+      guardarEvento(valores[0], valores[1], valores[2])
     }
   }
 
@@ -113,7 +154,7 @@ export function Horarios() {
         localizer={localizer}
         defaultDate={new Date()}
         defaultView="month"
-        events={eventos}
+        events={horarios}
         style={{ height: "100vh" }}
       />
 
