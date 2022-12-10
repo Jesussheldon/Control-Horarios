@@ -1,3 +1,7 @@
+
+/* **************************************************************************************************************/
+
+
 #sidebar {
   position: fixed;
   width: 4.5rem;
@@ -75,4 +79,13 @@ body {
   right: 20px;
   bottom: 20px;
   border-radius: 50%;
+  z-index: 999;
+}
+
+#btImprimir{
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  border-radius: 50%;
+  z-index: 999;
 }

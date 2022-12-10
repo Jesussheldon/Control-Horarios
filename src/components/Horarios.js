@@ -1,12 +1,18 @@
 import { useAuth } from "../context/authContext";
 import Sidebar from "./Sidebar";
-import { Calendar, momentLocalizer } from "react-big-calendar";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 import { app } from "../firebase";
 import { getDatabase, ref, set, get, child, off } from "firebase/database";
+import * as htmlToImage from 'html-to-image';
+import format from 'date-fns/format'
+import parse from 'date-fns/parse'
+import startOfWeek from 'date-fns/startOfWeek'
+import getDay from 'date-fns/getDay'
+import es from 'date-fns/locale/es'
 
 
 
@@ -17,8 +23,10 @@ export function Horarios() {
   const [camilleros, setCamilleros] = useState([]);
   const [opciones, setOpciones] = useState("");
   const [horarios, setHorarios] = useState([]);
+  let ready = false
 
   useEffect(() => {
+
     setEventos([
       `<option value="VACACIONES">VACACIONES</option>`,
       `<option value="CONGRESOS">CONGRESOS</option>`,
@@ -29,7 +37,7 @@ export function Horarios() {
     obtenerHorarios()
     obtenerCamilleros()
     eventoColor()
-  }, [])
+  })
 
   const writeUserData = (nombre, turno) => {
     const db = getDatabase();
@@ -85,6 +93,7 @@ export function Horarios() {
     }).catch((error) => {
       console.error(error);
     });
+
   }
 
   const generateString = (length) => {
@@ -117,7 +126,7 @@ export function Horarios() {
         els[i].style.background = "orange"
       } else if (els[i].innerHTML.indexOf(searchValue5) > -1) {
         els[i].style.background = "steelblue"
-      } 
+      }
     }
   }
 
@@ -144,7 +153,7 @@ export function Horarios() {
   const agregarEvento = async () => {
 
     const { value: valores } = await Swal.fire({
-      title: 'Multiple inputs',
+      title: 'Nuevo Registro',
       html:
         `<select id="swal-input1"><option selected>seleccione uno</option>${opciones}</select>` +
         `<select id="swal-input2"><option selected>seleccione uno</option>${eventos}</select>` +
@@ -164,17 +173,37 @@ export function Horarios() {
     }
   }
 
+  const imprimirHorarios = () => {
+    htmlToImage.toSvg(document.querySelector('#calendario'), { quality: 0.5 }).then(function (dataUrl) {
+      var link = document.createElement('a');
+      link.download = 'Horario ' + new Date().toDateString() + '.svg';
+      link.href = dataUrl;
+      link.click();
+    });
+  }
+
   if (loading) return <h1>loading</h1>
 
-  const localizer = momentLocalizer(moment);
+  const locales = {
+    'en-US': es,
+  }
+  
+  const localizer = dateFnsLocalizer({
+    format,
+    parse,
+    startOfWeek,
+    getDay,
+    locales,
+  })
 
 
   return <div>
     <Sidebar menu={2} />
 
     <div className="container">
-      <h1>Horarios {user.email}</h1>
-      <button onClick={agregarEvento} id="btAgregar" type="button" className="btn btn-primary"><i className="bi bi-patch-plus-fill"></i></button>
+      <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Registrar" onClick={agregarEvento} id="btAgregar" type="button" className="btn btn-primary"><i className="bi bi-patch-plus-fill"></i></button>
+      <button data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Imprimir" onClick={imprimirHorarios} id="btImprimir" type="button" className="btn btn-secondary"><i class="bi bi-printer-fill"></i></button>
+      <div id="calendario">
       <Calendar
         localizer={localizer}
         defaultDate={new Date()}
@@ -182,6 +211,7 @@ export function Horarios() {
         events={horarios}
         style={{ height: "100vh" }}
       />
+      </div>
 
     </div>
 

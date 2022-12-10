@@ -17,7 +17,7 @@ export function Home() {
           <p className="display-2">Control Horarios</p>
         </div>
       </div>
-      <h1>Welcome {user.email}</h1>
+      <h1>Bienvenido {user.email}</h1>
 
 
     </div>
