@@ -93,7 +93,6 @@ export function Horarios() {
     }).catch((error) => {
       console.error(error);
     });
-
   }
 
   const generateString = (length) => {

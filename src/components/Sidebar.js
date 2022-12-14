@@ -24,7 +24,7 @@ function Sidebar({menu}) {
                     </a>
                 </li>
                 <li>
-                    <a href="/imprimir" className={`nav-link py-3 border-bottom ${menu===3 && 'active'}`}  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Orders">
+                    <a href="/registrar" className={`nav-link py-3 border-bottom ${menu===3 && 'active'}`}  data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Orders">
                         <i className="bi bi-clipboard2-pulse-fill"></i>
                     </a>
                 </li>
